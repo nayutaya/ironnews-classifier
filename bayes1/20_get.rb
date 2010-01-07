@@ -18,13 +18,16 @@ end
 username, password = read_credential
 token = create_token(username, password)
 
-url  = "http://ironnews.nayutaya.jp/api/get_division_untagged_articles"
+url  = "http://ironnews.nayutaya.jp/api/get_division_untagged_articles?per_page=20"
 json = open(url, {"X-WSSE" => token}) { |io| io.read }
 obj  = JSON.parse(json)
 
 articles = obj["result"]["articles"]
-articles.each { |article|
-  article_id = article["article_id"]
-  title      = article["title"]
-  puts([article_id, title].join("\t"))
+
+File.open("untagged_articles.out", "wb") { |file|
+  articles.each { |article|
+    article_id = article["article_id"]
+    title      = article["title"]
+    file.puts([article_id, title].join("\t"))
+  }
 }
