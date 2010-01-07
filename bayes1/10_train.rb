@@ -15,17 +15,14 @@ STDERR.puts("training...")
   ["rail", "../../ironnews-data/news_title/rail_*.txt"],
   ["rest", "../../ironnews-data/news_title/rest_*.txt"],
 ].each { |category, pattern|
-  p [category, pattern]
   Dir.glob(pattern).each { |path|
-    p path
+    STDERR.puts("#{category} #{path}")
+    File.foreach(path) { |line|
+      title = line.chomp
+      categorizer.train(category, title)
+    }
   }
 }
-
-=begin
-STDIN.each { |line|
-  categorizer.train(category_name, line.chomp)
-}
-=end
 
 STDERR.puts("saving...")
 categorizer.save(DB_FILENAME)
