@@ -29,5 +29,6 @@ File.foreach("untagged_articles.out") { |line|
     else raise
     end
   next if category_ja == "不明"
+  next if /\A[A-Za-z0-9_-]+\z/ =~ title
   out.puts([category_ja, article_id, title].join("\t"))
 }
