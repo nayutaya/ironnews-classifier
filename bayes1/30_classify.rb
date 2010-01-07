@@ -28,5 +28,6 @@ File.foreach("untagged_articles.out") { |line|
     when nil    then "不明"
     else raise
     end
+  next if category_ja == "不明"
   out.puts([category_ja, article_id, title].join("\t"))
 }
