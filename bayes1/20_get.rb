@@ -22,6 +22,8 @@ url  = "http://ironnews.nayutaya.jp/api/get_division_untagged_articles?per_page=
 json = open(url, {"X-WSSE" => token}) { |io| io.read }
 obj  = JSON.parse(json)
 
+p obj["result"]["total_entries"]
+
 articles = obj["result"]["articles"]
 
 File.open("untagged_articles.out", "wb") { |file|
