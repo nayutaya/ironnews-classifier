@@ -26,4 +26,6 @@ File.foreach("tagging.out") { |line|
   tag, article_id, title = line.chomp.split(/\t/)
   puts(article_id)
   tagging(article_id, tag)
+
+  sleep(0.1)
 }
