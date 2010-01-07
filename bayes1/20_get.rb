@@ -18,7 +18,7 @@ end
 username, password = read_credential
 token = create_token(username, password)
 
-url  = "http://ironnews.nayutaya.jp/api/get_division_untagged_articles?per_page=50"
+url  = "http://ironnews.nayutaya.jp/api/get_division_untagged_articles?per_page=100"
 json = open(url, {"X-WSSE" => token}) { |io| io.read }
 obj  = JSON.parse(json)
 
