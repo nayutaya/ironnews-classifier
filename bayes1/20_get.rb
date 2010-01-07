@@ -27,7 +27,7 @@ articles = obj["result"]["articles"]
 File.open("untagged_articles.out", "wb") { |file|
   articles.each { |article|
     article_id = article["article_id"]
-    title      = article["title"]
+    title      = article["title"].gsub(/[\r\n]/, "")
     file.puts([article_id, title].join("\t"))
   }
 }
