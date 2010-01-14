@@ -47,16 +47,17 @@ class BigramTokenizer
     text.gsub!(/[\x5B-\x60]/, " ")
     text.gsub!(/[\x7B-\x7E]/, " ")
 
-    # 行頭と行末の空白と削除する
+    text.gsub!(/\s+/, " ")
+
+    # 行頭と行末の空白文字を削除する
     text.strip!
 
-    # 2-gram
-    return text.split(/\s+/).select { |str|
-      str.chars.to_a.size >= 2
-    }.map { |str|
-      str.scan(/\d+(?:\.\d+)?|./).
-        enum_cons(2).
-        map { |chars| chars.join("") }
-    }.flatten
+    # 行頭と行末にスペースを付加する
+    text = " #{text} "
+
+    # 2-gramにより分割
+    return text.scan(/\d+(?:\.\d+)?|./).
+      enum_cons(2).
+      map { |chars| chars.join("") }
   end
 end
