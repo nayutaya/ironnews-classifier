@@ -4,7 +4,7 @@ class Document
 
   property :id,       Serial
   property :body,     Text,   :required => true
-  property :category, String, :required => true, :length => 5
+  property :category, String, :required => true, :length => 10
 
   has n, :features
 end
