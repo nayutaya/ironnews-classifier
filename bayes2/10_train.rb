@@ -12,7 +12,6 @@ Feature.all.destroy!
 
 STDERR.puts("training...")
 [
-#  ["鉄道", "rail_xx.txt"],
 #  ["鉄道", "../../ironnews-data/news_title/rail_xx.txt"],
   ["鉄道", "../../ironnews-data/news_title/rail_*.txt"],
   ["非鉄", "../../ironnews-data/news_title/rest_*.txt"],
@@ -23,7 +22,7 @@ STDERR.puts("training...")
       title  = line.chomp
       tokens = tokenizer.tokenize(title)
 
-      document = Document.new(:body => title, :category => category)
+      document = Document.new(:category => category)
       document.features = tokens.map { |token| Feature.new(:feature => token) }
       document.save
 
