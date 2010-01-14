@@ -73,6 +73,21 @@ class NaiveBayesCategorizer
     features = @tokenizer.tokenize(document)
     return @classifier.classify(features)
   end
+
+  def categorize(document, thresholds = {})
+    probs = self.classify(document).
+      map     { |category, prob| [category, prob] }.
+      sort_by { |category, prob| prob }
+
+    first_category,  first_prob  = probs[-1]
+    second_category, second_prob = probs[-2]
+
+    if first_prob > second_prob * (thresholds[first_category] || 1.0)
+      return first_category
+    else
+      return nil
+    end
+  end
 end
 
 tokenizer   = BigramTokenizer.new
@@ -89,4 +104,9 @@ p classifier.fprob("jr", "鉄道")
 p classifier.fprob("jr", "非鉄")
 =end
 
-p categorizer.classify("JR北海道が国鉄時代の特急を満喫できるツアーを発売")
+thresholds = {
+  "鉄道" => 1.0,
+  "非鉄" => 3.5,
+}
+
+p categorizer.categorize("JR北海道が国鉄時代の特急を満喫できるツアーを発売", thresholds)
