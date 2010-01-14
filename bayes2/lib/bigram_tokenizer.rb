@@ -47,6 +47,7 @@ class BigramTokenizer
     text.gsub!(/[\x5B-\x60]/, " ")
     text.gsub!(/[\x7B-\x7E]/, " ")
 
+    # 連続する空白文字をスペースに置換する
     text.gsub!(/\s+/, " ")
 
     # 行頭と行末の空白文字を削除する
@@ -55,7 +56,7 @@ class BigramTokenizer
     # 行頭と行末にスペースを付加する
     text = " #{text} "
 
-    # 2-gramにより分割
+    # 2-gramにより分割する
     return text.scan(/\d+(?:\.\d+)?|./).
       enum_cons(2).
       map { |chars| chars.join("") }
