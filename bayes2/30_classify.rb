@@ -6,26 +6,29 @@ require "bigram_tokenizer"
 class NaiveBayesClassifier
   # あるカテゴリの中に、ある特徴が現れた数
   def fcount(feature, category)
-    #return ((@features[feature] || {})[category] || 0)
-    return Feature.count("feature" => feature, "document.category" => category)
+    key = "#{feature}_#{category}"
+    @_fcount      ||= {}
+    @_fcount[key] ||= Feature.count("feature" => feature, "document.category" => category)
+    return @_fcount[key]
   end
 
   # あるカテゴリの中のドキュメント数
   def catcount(category)
-    #return (@quantities[category] || 0)
-    return Document.count(:category => category)
+    @_catcount ||= {}
+    @_catcount[category] ||= Document.count(:category => category)
+    return @_catcount[category]
   end
 
   # ドキュメントの総数
   def totalcount
-    #return @quantities.values.inject { |ret, val| ret + val }
-    return Document.count
+    @_totalcount ||= Document.count
+    return @_totalcount
   end
 
   # カテゴリの一覧
   def categories
-    #return @quantities.keys
-    return repository(:default).adapter.select("SELECT category FROM documents GROUP BY category")
+    @_categories ||= repository(:default).adapter.select("SELECT category FROM documents GROUP BY category")
+    return @_categories
   end
 
   # ある特徴が、あるカテゴリに現れる確率
