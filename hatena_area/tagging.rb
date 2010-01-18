@@ -108,6 +108,14 @@ def get_area(pref)
   }[pref] || raise("unknown pref -- #{pref}")
 end
 
+def tagging(article_id, tag)
+  url  = "http://ironnews.nayutaya.jp/api/add_tags"
+  url += "?article_id=#{article_id}"
+  url += "&tag1=#{CGI.escape(tag)}"
+  token = Wsse::UsernameToken.build(USERNAME, PASSWORD).format
+  open(url, {"X-WSSE" => token}) { |io| io.read }
+end
+
 
 Thread.abort_on_exception = true
 log_q               = Queue.new
@@ -125,7 +133,8 @@ logging_thread = Thread.start {
 get_articles_thread = Thread.start {
   log_q.push("start get articles thread")
 
-  page = 1
+  #page = 1
+  page = 15
   begin
     log_q.push("get page #{page}")
     ret = get_area_untagged_articles(page)
@@ -138,7 +147,7 @@ get_articles_thread = Thread.start {
       })
     }
     page += 1
-    break if page > 10
+    break if page > 20
 #  end while false
   end while page <= ret["result"]["total_pages"]
 
@@ -205,11 +214,16 @@ tagging_thread = Thread.start {
   log_q.push("start tagging thread")
 
   while article = lookuped_articles_q.pop
-p article
+    id   = article[:id]
+    pref = article[:pref]
+    area = article[:area]
+    log_q.push("add tag #{id}")
+    tagging(id, pref)
+    tagging(id, area)
   end
 
   log_q.push("exit tagging thread")
 }
 
-#tagging_thread.join
-gets
+tagging_thread.join
+#gets
