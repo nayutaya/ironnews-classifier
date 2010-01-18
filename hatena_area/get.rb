@@ -25,20 +25,18 @@ def get_area(url)
   doc  = Nokogiri.HTML(html)
   div  = doc.css("#entryinfo-body").first
   link = div.css("a.location-link").first
-  return link.text
+  return link.text if link
 end
 
 data = <<EOS
-http://mainichi.jp/area/aichi/news/20091116ddlk23040128000c.html	鉄道トラブル：新幹線線路侵入、容疑の男を逮捕－－豊橋署　／愛知 - 毎日ｊｐ(毎日新聞)
-http://mainichi.jp/area/akita/news/20091116ddlk05040035000c.html	強風：被害、４人けが　空と鉄道、交通網乱れる　５７４１戸停電　／秋田 - 毎日ｊｐ(毎日新聞)
-http://mainichi.jp/area/aomori/news/20091103ddlk02040059000c.html	鉄道事故：大湊線踏切で２人死亡　トラックと列車が衝突　／青森 - 毎日ｊｐ(毎日新聞)
-http://mainichi.jp/area/chiba/news/20091029ddlk12040105000c.html	成田新高速鉄道：建設工事が大詰め　アクセス改善期待、空港－日暮里３６分　／千葉 - 毎日ｊｐ(毎日新聞)
+http://mainichi.jp/select/biz/ushioda/news/20091115ddm008070052000c.html	千波万波：鉄道ルネサンス＝潮田道夫 - 毎日ｊｐ(毎日新聞)
+http://mainichi.jp/select/jiken/archive/news/2009/11/26/20091126dde041040018000c.html	鉄道事故：線路に飛び降り、母娘？２人死傷－－横浜・相鉄線 - 毎日ｊｐ(毎日新聞)
 EOS
 
 data.lines.map { |line|
   line.strip.split(/\t/)
 }.each { |url, title|
-  p [url, title]
+  STDERR.puts([url, title].inspect)
   p get_area(url)
   sleep 1.0
 }
