@@ -16,15 +16,22 @@ def get_combined_tags(article_ids)
   return obj["result"].mash { |id, tags| [id.to_i, tags] }
 end
 
-list = File.foreach("area_untagged_articles.out").map { |line|
+articles = File.foreach("area_untagged_articles.out").map { |line|
   line.strip.split(/\t/)
+}.map { |article_id, url, title|
+  [article_id.to_i, url, title]
 }
 
 combined_tags = {}
-
-list.each_slice(10).each { |records|
+articles.each_slice(10).each { |records|
   article_ids = records.map { |article_id, url, title| article_id }
   combined_tags.merge!(get_combined_tags(article_ids))
-break
 }
-p combined_tags
+
+File.open("area_untagged_articles_filtered.out", "wb") { |file|
+  articles.select { |article_id, url, title|
+    combined_tags[article_id].include?("鉄道")
+  }.each { |article_id, url, title|
+    file.puts([article_id, url, title].join("\t"))
+  }
+}
