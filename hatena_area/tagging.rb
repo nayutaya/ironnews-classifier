@@ -32,9 +32,18 @@ def get_area_untagged_articles(page)
 end
 
 def get_combined_tags(article_ids)
-  url  = "http://ironnews.nayutaya.jp/api/get_combined_tags"
-  url += "?article_ids=" + CGI.escape(article_ids.sort.join(","))
-  json = open(url) { |io| io.read }
+  hash  = Digest::SHA1.hexdigest(article_ids.sort.uniq.join(","))
+  cache = "#{__DIR__}/cache/tags_#{hash}"
+
+  if File.exist?(cache)
+    json = File.open(cache, "rb") { |file| file.read }
+  else
+    url  = "http://ironnews.nayutaya.jp/api/get_combined_tags"
+    url += "?article_ids=" + CGI.escape(article_ids.sort.join(","))
+    json = open(url) { |io| io.read }
+    File.open(cache, "wb") { |file| file.write(json) }
+  end
+
   obj  = JSON.parse(json)
   return obj["result"].mash { |id, tags| [id.to_i, tags] }
 end
@@ -197,25 +206,29 @@ Thread.start {
   end
 
   log_q.push("exit get tags thread")
-  tagged_articles_q.push(nil)
+  2.times {
+    tagged_articles_q.push(nil)
+  }
 }
 
 # 都道府県、地域を取得するスレッド
-Thread.start {
-  log_q.push("start lookup area thread")
+2.times { |i|
+  Thread.start {
+    log_q.push("start lookup area thread")
 
-  while article = tagged_articles_q.pop
-    url = article[:url]
-    log_q.push("get pref #{url}")
-    pref = get_pref(url)
-    if pref
-      area = get_area(pref)
-      lookuped_articles_q.push(article.merge(:pref => pref, :area => area))
+    while article = tagged_articles_q.pop
+      url = article[:url]
+      log_q.push("get pref:#{i} #{url}")
+      pref = get_pref(url)
+      if pref
+        area = get_area(pref)
+        lookuped_articles_q.push(article.merge(:pref => pref, :area => area))
+      end
     end
-  end
 
-  log_q.push("end lookup area thread")
-  lookuped_articles_q.push(nil)
+    log_q.push("end lookup area thread")
+    lookuped_articles_q.push(nil)
+  }
 }
 
 # タグを設定するスレッド
@@ -234,7 +247,7 @@ Thread.start {
   log_q.push("exit tagging thread")
 }#.join
 
-#gets
+gets
 
 log_q.push("exit")
 log_q.push(nil)
