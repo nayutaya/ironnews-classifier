@@ -12,22 +12,24 @@ def create_token
   return Wsse::UsernameToken.build(username, password).format
 end
 
-
-token = create_token
-
-url  = "http://ironnews.nayutaya.jp/api/get_area_untagged_articles?per_page=100"
-json = open(url, {"X-WSSE" => token}) { |io| io.read }
-obj  = JSON.parse(json)
-
-p obj["result"]["total_entries"]
-
-articles = obj["result"]["articles"]
-
 File.open("area_untagged_articles.out", "wb") { |file|
-  articles.each { |article|
-    article_id = article["article_id"]
-    url        = article["url"]
-    title      = article["title"]
-    file.puts([article_id, url, title].join("\t"))
-  }
+  page = 1
+  begin
+    STDERR.puts("page: #{page}")
+
+    url  = "http://ironnews.nayutaya.jp/api/get_area_untagged_articles?per_page=100&page=#{page}"
+    json = open(url, {"X-WSSE" => create_token}) { |io| io.read }
+    obj  = JSON.parse(json)
+
+    articles = obj["result"]["articles"]
+    articles.each { |article|
+      article_id = article["article_id"]
+      url        = article["url"]
+      title      = article["title"]
+      file.puts([article_id, url, title].join("\t"))
+    }
+
+    page += 1
+    break if page > 20
+  end while page <= obj["result"]["total_pages"]
 }
