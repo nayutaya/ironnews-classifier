@@ -1,9 +1,5 @@
 #! ruby -Ku
 
-=begin
-: 
-=end
-
 def get_area(pref)
   return {
     "北海道"   => "北海道",
