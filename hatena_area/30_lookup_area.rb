@@ -42,6 +42,6 @@ File.open("area_untagged_articles_lookuped.out", "wb") { |file|
       file.puts([article_id, area, url, title].join("\t"))
     end
 
-    sleep(0.2)
+    sleep(0.1)
   }
 }
