@@ -1,5 +1,12 @@
 #! ruby -Ku
 
+# はてなブックマークから都道府県名を取得し、地域タグを設定する
+# (1) ironnewsから地域タグが設定されていない記事を取得する
+# (2) 各記事の合成タグを取得する
+# (3) 「鉄道」合成タグが含まれている記事を取得する
+# (4) はてなブックマークのエントリページから都道府県名を取得する
+# (5) 都道府県タグ、地域タグをironnewsに送信する
+
 require "yaml"
 require "thread"
 require "open-uri"
@@ -12,25 +19,23 @@ require "facets"
 require "nokogiri"
 
 CREDENTIALS = YAML.load_file("ironnews.id")
-USERNAME = "hatena_area"
-PASSWORD = CREDENTIALS[USERNAME]
+USERNAME    = "hatena_area"
+PASSWORD    = CREDENTIALS[USERNAME]
 
 def get_area_untagged_articles(page)
   url  = "http://ironnews.nayutaya.jp/api/get_area_untagged_articles"
   url += "?per_page=100"
   url += "&page=#{page}"
   token = Wsse::UsernameToken.build(USERNAME, PASSWORD).format
-  json = open(url, {"X-WSSE" => token}) { |io| io.read }
+  json  = open(url, {"X-WSSE" => token}) { |io| io.read }
   return JSON.parse(json)
 end
 
 def get_combined_tags(article_ids)
   url  = "http://ironnews.nayutaya.jp/api/get_combined_tags"
   url += "?article_ids=" + CGI.escape(article_ids.sort.join(","))
-
   json = open(url) { |io| io.read }
   obj  = JSON.parse(json)
-
   return obj["result"].mash { |id, tags| [id.to_i, tags] }
 end
 
@@ -49,7 +54,6 @@ end
 def get_pref(url)
   entry = url.sub(/^http:\/\//, "http://b.hatena.ne.jp/entry/")
   html  = get_page(entry)
-
   doc  = Nokogiri.HTML(html)
   div  = doc.css("#entryinfo-body").first
   link = div.css("a.location-link").first
@@ -124,13 +128,15 @@ packet_articles_q   = Queue.new
 tagged_articles_q   = Queue.new
 lookuped_articles_q = Queue.new
 
-logging_thread = Thread.start {
+# ログを出力するスレッド
+Thread.start {
   while message = log_q.pop
     STDERR.printf("[%s] %s\n", Time.now.strftime("%Y-%m-%d %H:%M:%S"), message)
   end
 }
 
-get_articles_thread = Thread.start {
+# 地域タグが設定されていない記事の一覧を取得するスレッド
+Thread.start {
   log_q.push("start get articles thread")
 
   #page = 1
@@ -148,14 +154,14 @@ get_articles_thread = Thread.start {
     }
     page += 1
     break if page > 20
-#  end while false
   end while page <= ret["result"]["total_pages"]
 
   log_q.push("exit get articles thread")
   all_articles_q.push(nil)
 }
 
-packet_thread = Thread.start {
+# 合成タグを一括して取得するために10件ずつにまとめるスレッド
+Thread.start {
   log_q.push("start packet thread")
 
   packet = []
@@ -171,10 +177,11 @@ packet_thread = Thread.start {
   end
 
   log_q.push("end packet thread")
+  packet_articles_q.push(nil)
 }
 
-
-get_tags_thread = Thread.start {
+# 合成タグを取得するスレッド
+Thread.start {
   log_q.push("start get tags thread")
 
   while articles = packet_articles_q.pop
@@ -193,7 +200,8 @@ get_tags_thread = Thread.start {
   tagged_articles_q.push(nil)
 }
 
-filter_articles_thread = Thread.start {
+# 都道府県、地域を取得するスレッド
+Thread.start {
   log_q.push("start lookup area thread")
 
   while article = tagged_articles_q.pop
@@ -210,7 +218,8 @@ filter_articles_thread = Thread.start {
   lookuped_articles_q.push(nil)
 }
 
-tagging_thread = Thread.start {
+# タグを設定するスレッド
+Thread.start {
   log_q.push("start tagging thread")
 
   while article = lookuped_articles_q.pop
@@ -223,7 +232,10 @@ tagging_thread = Thread.start {
   end
 
   log_q.push("exit tagging thread")
-}
+}#.join
 
-tagging_thread.join
 #gets
+
+log_q.push("exit")
+log_q.push(nil)
+sleep(1)
