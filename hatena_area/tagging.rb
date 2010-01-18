@@ -112,6 +112,7 @@ end
 Thread.abort_on_exception = true
 log_q               = Queue.new
 all_articles_q      = Queue.new
+packet_articles_q   = Queue.new
 tagged_articles_q   = Queue.new
 lookuped_articles_q = Queue.new
 
@@ -136,22 +137,47 @@ get_articles_thread = Thread.start {
         :title => article["title"]
       })
     }
-  end while false
+    page += 1
+    break if page > 10
+#  end while false
+  end while page <= ret["result"]["total_pages"]
 
   log_q.push("exit get articles thread")
   all_articles_q.push(nil)
 }
 
+packet_thread = Thread.start {
+  log_q.push("start packet thread")
+
+  packet = []
+  while article = all_articles_q.pop
+    packet << article
+    if packet.size >= 10
+      packet_articles_q.push(packet)
+      packet = []
+    end
+  end
+  if packet.size >= 1
+    packet_articles_q.push(packet)
+  end
+
+  log_q.push("end packet thread")
+}
+
+
 get_tags_thread = Thread.start {
   log_q.push("start get tags thread")
 
-  while article = all_articles_q.pop
-    id = article[:id]
-    log_q.push("get tags #{id}")
-    tags = get_combined_tags([id])[id]
-    if tags.include?("鉄道")
-      tagged_articles_q.push(article.merge(:tags => tags))
-    end
+  while articles = packet_articles_q.pop
+    ids = articles.map { |article| article[:id] }
+    log_q.push("get tags #{ids.join(',')}")
+    tags = get_combined_tags(ids)
+    articles.each { |article|
+      tags2 = tags[article[:id]]
+      if tags2.include?("鉄道")
+        tagged_articles_q.push(article.merge(:tags => tags2))
+      end
+    }
   end
 
   log_q.push("exit get tags thread")
@@ -185,4 +211,5 @@ p article
   log_q.push("exit tagging thread")
 }
 
+#tagging_thread.join
 gets
