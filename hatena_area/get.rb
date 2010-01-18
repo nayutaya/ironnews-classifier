@@ -1,12 +1,26 @@
 #! ruby -Ku
 
 require "open-uri"
+require "digest/sha1"
 require "rubygems"
 require "nokogiri"
+require "facets"
+
+def get_page(url)
+  hash  = Digest::SHA1.hexdigest(url)
+  cache = "#{__DIR__}/cache/#{hash}"
+  if File.exist?(cache)
+    return File.open(cache, "rb") { |file| file.read }
+  else
+    page = open(url, {"Cache-Control" => "max-age=0"}) { |io| io.read }
+    File.open(cache, "wb") { |file| file.write(page) }
+    return page
+  end
+end
 
 def get_area(url)
   entry = url.sub(/^http:\/\//, "http://b.hatena.ne.jp/entry/")
-  html  = open(entry, {"Cache-Control" => "max-age=0"}) { |io| io.read }
+  html  = get_page(entry)
 
   doc  = Nokogiri.HTML(html)
   div  = doc.css("#entryinfo-body").first
@@ -28,11 +42,3 @@ data.lines.map { |line|
   p get_area(url)
   sleep 1.0
 }
-
-
-=begin
-article_url = "http://www.yomiuri.co.jp/national/news/20100118-OYT1T00579.htm"
-
-#File.open("src.html", "wb") { |file| file.write(src) }
-src = File.open("src.html", "rb") { |file| file.read }
-=end
