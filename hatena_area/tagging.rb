@@ -73,7 +73,7 @@ def get_pref(url)
   html  = get_page(entry)
   doc  = Nokogiri.HTML(html)
   div  = doc.css("#entryinfo-body").first
-  link = div.css("a.location-link").first
+  link = div.css("a.location-link").first if div
   return link.text if link
 end
 
