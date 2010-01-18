@@ -54,7 +54,15 @@ def get_page(url)
   if File.exist?(cache)
     return File.open(cache, "rb") { |file| file.read }
   else
-    page = open(url, {"Cache-Control" => "max-age=0"}) { |io| io.read }
+    count = 5
+    begin
+      page = open(url, {"Cache-Control" => "max-age=0"}) { |io| io.read }
+    rescue Timeout::Error
+      count -= 1
+      if count > 0
+        retry
+      end
+    end
     File.open(cache, "wb") { |file| file.write(page) }
     return page
   end
@@ -149,7 +157,7 @@ Thread.start {
   log_q.push("start get articles thread")
 
   #page = 1
-  page = 15
+  page = 10
   begin
     log_q.push("get page #{page}")
     ret = get_area_untagged_articles(page)
@@ -162,7 +170,7 @@ Thread.start {
       })
     }
     page += 1
-    break if page > 20
+    #break if page > 20
   end while page <= ret["result"]["total_pages"]
 
   log_q.push("exit get articles thread")
