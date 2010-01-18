@@ -26,7 +26,8 @@ articles = obj["result"]["articles"]
 File.open("area_untagged_articles.out", "wb") { |file|
   articles.each { |article|
     article_id = article["article_id"]
+    url        = article["url"]
     title      = article["title"]
-    file.puts([article_id, title].join("\t"))
+    file.puts([article_id, url, title].join("\t"))
   }
 }
