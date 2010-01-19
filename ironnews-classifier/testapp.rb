@@ -9,12 +9,10 @@ require "models"
 
 DataMapper.setup(:default, "appengine://auto")
 
-=begin
 helpers do
   include Rack::Utils
   alias_method :h, :escape_html
 end
-=end
 
 get "/" do
   #obj = JSON.parse(params[:json])
@@ -28,10 +26,6 @@ get "/" do
 end
 
 get "/documents" do
-=begin
-  Document.all.each { |document|
-    document.inspect
-  }.join
-=end
+  @documents = Document.all
   erb :documents
 end
