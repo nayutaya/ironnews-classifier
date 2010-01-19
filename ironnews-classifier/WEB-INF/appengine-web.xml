@@ -11,4 +11,5 @@
     <property name='jruby.management.enabled' value='false'/>
     <property name='jruby.rack.input.rewindable' value='false'/>
   </system-properties>
+  <precompilation-enabled>true</precompilation-enabled>
 </appengine-web-app>
