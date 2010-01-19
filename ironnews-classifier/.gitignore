@@ -1,0 +1,4 @@
+.gems/
+bin/
+WEB-INF/appengine-generated/
+*.jar
