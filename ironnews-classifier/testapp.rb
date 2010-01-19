@@ -17,10 +17,21 @@ end
 =end
 
 get "/" do
-  doc = Document.create(:body => "body")
-  cat = Category.create(:name => "name", :quantity => 1)
-  fet = Feature.create(:category => "cat", :feature => "fet", :quantity => 2)
-
+  #obj = JSON.parse(params[:json])
+  #doc = Document.create(:body => "body")
+  #cat = Category.create(:name => "name", :quantity => 1)
+  #fet = Feature.create(:category => "cat", :feature => "fet", :quantity => 2)
   #PureNKF.convert_Z1("ｈｅｌｌｏ　ｓｉｎａｔｒａ")
-  {"a" => 1}.to_json
+  #{"a" => 1}.to_json
+
+  obj.inspect
+end
+
+get "/documents" do
+=begin
+  Document.all.each { |document|
+    document.inspect
+  }.join
+=end
+  erb :documents
 end
