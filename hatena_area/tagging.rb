@@ -156,8 +156,7 @@ Thread.start {
 Thread.start {
   log_q.push("start get articles thread")
 
-  #page = 1
-  page = 10
+  page = 1
   begin
     log_q.push("get page #{page}")
     ret = get_area_untagged_articles(page)
@@ -170,7 +169,7 @@ Thread.start {
       })
     }
     page += 1
-    #break if page > 20
+    break if page > 5
   end while page <= ret["result"]["total_pages"]
 
   log_q.push("exit get articles thread")
