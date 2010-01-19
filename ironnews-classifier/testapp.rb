@@ -3,21 +3,21 @@
 require "sinatra"
 require "dm-core"
 
+require "models"
+
 DataMapper.setup(:default, "appengine://auto")
 
-class Shout
-  include DataMapper::Resource
-
-  property :id,      Serial
-  property :message, Text
-end
-
+=begin
 helpers do
   include Rack::Utils
   alias_method :h, :escape_html
 end
+=end
 
 get "/" do
-  shout = Shout.create(:message => "hoge")
+  doc = Document.create(:body => "body")
+  cat = Category.create(:name => "name", :quantity => 1)
+  fet = Feature.create(:category => "cat", :feature => "fet", :quantity => 2)
+
   "hello sinatra"
 end
