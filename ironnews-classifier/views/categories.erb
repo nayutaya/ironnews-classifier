@@ -1,0 +1,21 @@
+<html>
+ <head>
+  <title>categories</title>
+ </head>
+ <body>
+  <table border="1">
+   <tr>
+    <th>ID</th>
+    <th>name</th>
+    <th>quantity</th>
+   </tr>
+   <% @categories.each { |category| %>
+    <tr>
+     <td><%=h category.id %></td>
+     <td><%=h category.name %></td>
+     <td><%=h category.quantity %></td>
+    </tr>
+   <% } %>
+  </table>
+ </body>
+</html>

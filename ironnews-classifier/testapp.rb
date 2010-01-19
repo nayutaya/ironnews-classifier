@@ -29,3 +29,13 @@ get "/documents" do
   @documents = Document.all
   erb :documents
 end
+
+get "/categories" do
+  @categories = Category.all
+  erb :categories
+end
+
+get "/features" do
+  @features = Feature.all
+  erb :features
+end
