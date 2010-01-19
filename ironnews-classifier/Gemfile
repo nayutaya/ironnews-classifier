@@ -6,3 +6,6 @@ bundle_path ".gems/bundler_gems"
 gem "appengine-rack"
 gem "dm-appengine"
 gem "sinatra"
+
+gem "json_pure"
+gem "nayutaya-pure-nkf"
