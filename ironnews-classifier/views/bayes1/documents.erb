@@ -1,0 +1,21 @@
+<html>
+ <head>
+  <title>documents</title>
+ </head>
+ <body>
+  <table border="1">
+   <tr>
+    <th>ID</th>
+    <th>body</th>
+    <th>trained</th>
+   </tr>
+   <% @documents.each { |document| %>
+    <tr>
+     <td><%=h document.id %></td>
+     <td><%=h document.body %></td>
+     <td><%=h document.trained ? "Yes" : "No" %></td>
+    </tr>
+   <% } %>
+  </table>
+ </body>
+</html>

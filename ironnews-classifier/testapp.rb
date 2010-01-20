@@ -7,6 +7,9 @@ require "json"
 require "pure_nkf"
 require "models"
 
+require "bayes1/app"
+require "bayes1/models"
+
 DataMapper.setup(:default, "appengine://auto")
 
 helpers do
