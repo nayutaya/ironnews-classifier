@@ -5,10 +5,18 @@
 require "cgi"
 require "open-uri"
 
-url  = "http://localhost:8080/bayes1/add"
-url += "?category=" + CGI.escape("非鉄")
-url += "&body=" + CGI.escape("これは鉄道関連ではない文章です")
+def add(category, body)
+  p [category, body]
+  url  = "http://localhost:8080/bayes1/add"
+  url += "?category=" + CGI.escape(category)
+  url += "&body=" + CGI.escape(body)
+  open(url) { |io|
+    p(io.read)
+  }
+end
 
-open(url) { |io|
-  p(io.read)
-}
+rails = File.foreach("rail_01.txt").map { |line| line.strip }.sort_by { rand }[0, 10]
+rests = File.foreach("rest_01.txt").map { |line| line.strip }.sort_by { rand }[0, 10]
+
+rails.each { |title| add("鉄道", title) }
+rests.each { |title| add("非鉄", title) }

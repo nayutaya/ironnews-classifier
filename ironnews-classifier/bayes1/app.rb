@@ -80,6 +80,7 @@ get "/bayes1/train" do
     document.save
   }
 
-  content_type(:json)
+  #content_type(:json)
+  content_type(:text)
   {"success" => true}.to_json
 end
