@@ -5,9 +5,12 @@
 require "cgi"
 require "open-uri"
 
+HOST = "localhost:8080"
+#HOST = "ironnews-classifier1.appspot.com"
+
 def add(category, body)
   p [category, body]
-  url  = "http://localhost:8080/bayes1/add"
+  url  = "http://#{HOST}/bayes1/add"
   url += "?category=" + CGI.escape(category)
   url += "&body=" + CGI.escape(body)
   open(url) { |io|
