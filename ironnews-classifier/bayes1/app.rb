@@ -86,3 +86,7 @@ get "/bayes1/train" do
   content_type(:text)
   {"success" => true}.to_json
 end
+
+get "/bayes1/classify" do
+  erb(:test)
+end
