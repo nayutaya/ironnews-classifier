@@ -1,14 +1,31 @@
 
 <%
+
+require "bayes1/tokenizer"
+
   all_documents = BayesOneDocument.all(
     :trained => false,
     :limit   => 100)
-  target_documents = all_documents.sort_by { rand }[0, 1]
+
+  target_documents = all_documents.
+    sort_by { rand }.
+    slice(0, 3)
 
   target_documents.each { |document|
     #document.trained = true
     #document.save
   }
+
+tokenizer = BayesOneTokenizer.new
+
 %>
 
-<%=h target_documents.inspect %>
+<%#=h target_documents.inspect %>
+<%#=h tokenizer.inspect %>
+
+<% target_documents.each { |document| %>
+ <div>
+  <%=h document.body %>
+  <%=h tokenizer.tokenize(document.body).join("/") %>
+ </div>
+<% } %>
