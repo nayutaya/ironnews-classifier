@@ -2,6 +2,7 @@
 require "json"
 require "bayes1/models"
 require "bayes1/tokenizer"
+require "bayes1/classifier"
 
 get "/bayes1" do
   "bayes1"
