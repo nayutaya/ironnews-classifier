@@ -40,4 +40,12 @@ get "/bayes1/remove" do
 end
 
 get "/bayes1/train" do
+=begin
+  query = AppEngine::Datastore::Query.new("BayesOneDocument")
+  query.filter(:trained, "=", false)
+  query.java_query.setKeysOnly
+
+  documents = query.fetch(:limit => 100).to_a
+=end
+  erb(:test)
 end
