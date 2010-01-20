@@ -25,15 +25,19 @@ class BayesOneClassifier
     }
   end
 
-=begin
   # ドキュメントの総数
   def totalcount
-    return @quantities.values.inject { |ret, val| ret + val }
+    categories = BayesOneCategory.all
+    return categories.inject(0) { |sum, category|
+      sum + category.quantity
+    }
   end
 
   # カテゴリの一覧
   def categories
-    return @quantities.keys
+    #return @quantities.keys
+    categories = BayesOneCategory.all
+    return categories.map { |category| category.name }.sort.uniq
   end
 
   # ある特徴が、あるカテゴリに現れる確率
@@ -69,11 +73,16 @@ class BayesOneClassifier
       memo
     }
   end
-=end
 end
 
 classifier = BayesOneClassifier.new
 %>
 
-<%#=h classifier.fcount("jr", "鉄道").inspect %>
-<%#=h classifier.catcount("鉄道").inspect %>
+<div><%#=h classifier.fcount("jr", "鉄道").inspect %></div>
+<div><%#=h classifier.catcount("鉄道").inspect %></div>
+<div><%#=h classifier.totalcount.inspect %></div>
+<div><%#=h classifier.categories.join(",") %></div>
+<div><%#=h classifier.weightedprob("jr", "鉄道").inspect %></div>
+<div><%#=h classifier.weightedprob("経済", "鉄道").inspect %></div>
+<div><%=h classifier.classify(["経済", "政治"]).to_a.join(" ") %></div>
+<div><%=h classifier.classify(["jr", "鉄道"]).to_a.join(" ") %></div>
