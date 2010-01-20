@@ -18,7 +18,9 @@ get "/bayes1/categories" do
 end
 
 get "/bayes1/features" do
-  @features = BayesOneFeature.all
+  @features = BayesOneFeature.all(
+    :order => [:quantity.desc],
+    :limit => 50)
   erb(:"bayes1/features")
 end
 
