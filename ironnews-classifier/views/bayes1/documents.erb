@@ -6,12 +6,14 @@
   <table border="1">
    <tr>
     <th>ID</th>
-    <th>body</th>
-    <th>trained</th>
+    <th>カテゴリ</th>
+    <th>本文</th>
+    <th>学習済み</th>
    </tr>
    <% @documents.each { |document| %>
     <tr>
      <td><%=h document.id %></td>
+     <td><%=h document.category %></td>
      <td><%=h document.body %></td>
      <td><%=h document.trained ? "Yes" : "No" %></td>
     </tr>

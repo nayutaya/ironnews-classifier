@@ -8,6 +8,5 @@ AppEngine::Rack.configure_app(
 
 require "app"
 require "bayes1/app"
-require "bayes1/models"
 
 run Sinatra::Application

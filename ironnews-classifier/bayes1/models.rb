@@ -3,9 +3,10 @@
 class BayesOneDocument
   include DataMapper::Resource
 
-  property :id,      Serial
-  property :body,    String
-  property :trained, Boolean, :default => false
+  property :id,       Serial
+  property :category, String
+  property :body,     String
+  property :trained,  Boolean, :default => false
 end
 
 # カテゴリモデル
