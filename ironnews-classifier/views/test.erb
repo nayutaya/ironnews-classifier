@@ -2,14 +2,4 @@
 <%# テスト用のerbファイル %>
 
 <%
-classifier = BayesOneClassifier.new
 %>
-
-<div><%#=h classifier.fcount("jr", "鉄道").inspect %></div>
-<div><%#=h classifier.catcount("鉄道").inspect %></div>
-<div><%#=h classifier.totalcount.inspect %></div>
-<div><%#=h classifier.categories.join(",") %></div>
-<div><%#=h classifier.weightedprob("jr", "鉄道").inspect %></div>
-<div><%#=h classifier.weightedprob("経済", "鉄道").inspect %></div>
-<div><%=h classifier.classify(["経済", "政治"]).to_a.join(" ") %></div>
-<div><%=h classifier.classify(["jr", "鉄道"]).to_a.join(" ") %></div>

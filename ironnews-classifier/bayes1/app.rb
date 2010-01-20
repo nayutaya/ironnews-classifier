@@ -89,5 +89,15 @@ get "/bayes1/train" do
 end
 
 get "/bayes1/classify" do
-  erb(:test)
+  body = params[:body].to_s
+
+  tokenizer  = BayesOneTokenizer.new
+  classifier = BayesOneClassifier.new
+
+  tokens = tokenizer.tokenize(body)
+  probs  = classifier.classify(tokens)
+
+  #content_type(:json)
+  content_type(:text)
+  return probs.to_json
 end
