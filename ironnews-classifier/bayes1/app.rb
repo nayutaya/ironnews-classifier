@@ -39,6 +39,13 @@ end
 
 # FIXME: POST
 get "/bayes1/remove" do
+  documents = BayesOneDocument.all
+  documents.each { |document| document.destroy }
+  categories = BayesOneCategory.all
+  categories.each { |category| category.destroy }
+  features = BayesOneFeature.all
+  features.each { |feature| feature.destroy }
+  "remove"
 end
 
 get "/bayes1/train" do
