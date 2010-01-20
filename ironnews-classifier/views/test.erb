@@ -3,8 +3,11 @@
 
 <%
 
+require "facets"
+
 class BayesOneClassifier
   def initialize
+    # nop
   end
 
   # あるカテゴリの中に、ある特徴が現れた数
@@ -12,17 +15,13 @@ class BayesOneClassifier
     features = BayesOneFeature.all(
       :category => category,
       :feature  => feature)
-    return features.inject(0) { |sum, feature|
-      sum + feature.quantity
-    }
+    return features.map(&:quantity).sum
   end
 
   # あるカテゴリの中のドキュメント数
   def catcount(category)
     categories = BayesOneCategory.all(:name => category)
-    return categories.inject(0) { |sum, category|
-      sum + category.quantity
-    }
+    return categories.map(&:quantity).sum
   end
 
   # ドキュメントの総数
