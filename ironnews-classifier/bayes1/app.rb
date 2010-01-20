@@ -53,11 +53,11 @@ get "/bayes1/train" do
 
   all_documents = BayesOneDocument.all(
     :trained => false,
-    :limit   => 100)
+    :limit   => 50)
 
   target_documents = all_documents.
     sort_by { rand }.
-    slice(0, 3)
+    slice(0, 2)
 
   target_documents.each { |document|
     # カテゴリの文書数をインクリメント
