@@ -5,6 +5,7 @@ bundle_path ".gems/bundler_gems"
 
 gem "appengine-rack"
 gem "dm-appengine"
+gem "dm-ar-finders"
 gem "sinatra"
 
 gem "json_pure"

@@ -1,6 +1,7 @@
 
 require "sinatra"
 require "dm-core"
+require "dm-ar-finders"
 
 DataMapper.setup(:default, "appengine://auto")
 

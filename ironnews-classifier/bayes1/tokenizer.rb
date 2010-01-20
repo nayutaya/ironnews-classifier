@@ -13,7 +13,6 @@ class BayesOneTokenizer
     text.gsub!(/[\r\n\t]/u, " ")
 
     # 全角英数字を半角英数字に置換する（一部記号も含む）
-    #text = NKF.nkf("-W -w80 -m0 -Z1", text)
     text = PureNKF.convert_Z1(text)
 
     # 連続した空白を単一の空白に置換する

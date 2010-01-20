@@ -2,6 +2,7 @@
 <%
 
 require "bayes1/tokenizer"
+tokenizer = BayesOneTokenizer.new
 
   all_documents = BayesOneDocument.all(
     :trained => false,
@@ -12,11 +13,18 @@ require "bayes1/tokenizer"
     slice(0, 3)
 
   target_documents.each { |document|
+    
+
+=begin
+    tokens = tokenizer.tokenize(document.body)
+    tokens.each { |token|
+    }
+=end
+
     #document.trained = true
     #document.save
   }
 
-tokenizer = BayesOneTokenizer.new
 
 %>
 
@@ -24,8 +32,11 @@ tokenizer = BayesOneTokenizer.new
 <%#=h tokenizer.inspect %>
 
 <% target_documents.each { |document| %>
- <div>
-  <%=h document.body %>
-  <%=h tokenizer.tokenize(document.body).join("/") %>
- </div>
+<div><%=h document.category %></div>
+
+<%
+category = BayesOneCategory.find_or_create(:name => document.category)
+
+%>
+<div><%=h category.inspect %></div>
 <% } %>
