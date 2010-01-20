@@ -12,31 +12,33 @@ class BayesOneClassifier
 
   # あるカテゴリの中に、ある特徴が現れた数
   def fcount(feature, category)
-    features = BayesOneFeature.all(
-      :category => category,
-      :feature  => feature)
-    return features.map(&:quantity).sum
+    @_fcount                    ||= {}
+    @_fcount[category]          ||= {}
+    @_fcount[category][feature] ||= BayesOneFeature.
+      all(:category => category, :feature => feature).
+      map(&:quantity).sum
+    return @_fcount[category][feature]
   end
 
   # あるカテゴリの中のドキュメント数
   def catcount(category)
-    categories = BayesOneCategory.all(:name => category)
-    return categories.map(&:quantity).sum
+    @_catcount ||= {}
+    @_catcount[category] ||= BayesOneCategory.
+      all(:name => category).
+      map(&:quantity).sum
+    return @_catcount[category]
   end
 
   # ドキュメントの総数
   def totalcount
-    categories = BayesOneCategory.all
-    return categories.inject(0) { |sum, category|
-      sum + category.quantity
-    }
+    @_totalcount ||= BayesOneCategory.all.map(&:quantity).sum
+    return @_totalcount
   end
 
   # カテゴリの一覧
   def categories
-    #return @quantities.keys
-    categories = BayesOneCategory.all
-    return categories.map { |category| category.name }.sort.uniq
+    @_categories ||= BayesOneCategory.all.map(&:name).sort.uniq
+    return @_categories
   end
 
   # ある特徴が、あるカテゴリに現れる確率
