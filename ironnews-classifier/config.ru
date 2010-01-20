@@ -6,6 +6,8 @@ AppEngine::Rack.configure_app(
   :application => "ironnews-classifier1",
   :version     => "v1")
 
-require "testapp"
+require "app"
+require "bayes1/app"
+require "bayes1/models"
 
 run Sinatra::Application

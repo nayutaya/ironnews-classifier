@@ -1,21 +1,7 @@
 #! ruby -Ku
 
-require "sinatra"
-require "dm-core"
-
 require "json"
 require "pure_nkf"
-require "models"
-
-require "bayes1/app"
-require "bayes1/models"
-
-DataMapper.setup(:default, "appengine://auto")
-
-helpers do
-  include Rack::Utils
-  alias_method :h, :escape_html
-end
 
 get "/" do
   #obj = JSON.parse(params[:json])
@@ -24,8 +10,7 @@ get "/" do
   #fet = Feature.create(:category => "cat", :feature => "fet", :quantity => 2)
   #PureNKF.convert_Z1("ｈｅｌｌｏ　ｓｉｎａｔｒａ")
   #{"a" => 1}.to_json
-
-  obj.inspect
+  ""
 end
 
 get "/train" do
@@ -53,19 +38,4 @@ get "/train" do
   AppEngine::Datastore.delete(records.map { |x| x.key })
   return records.inspect
 =end
-end
-
-get "/documents" do
-  @documents = Document.all
-  erb :documents
-end
-
-get "/categories" do
-  @categories = Category.all
-  erb :categories
-end
-
-get "/features" do
-  @features = Feature.all
-  erb :features
 end
