@@ -1,4 +1,5 @@
 
+require "json"
 require "bayes1/models"
 require "bayes1/tokenizer"
 
@@ -72,5 +73,6 @@ get "/bayes1/train" do
     document.save
   }
 
-  ""
+  content_type(:json)
+  {"success" => true}.to_json
 end

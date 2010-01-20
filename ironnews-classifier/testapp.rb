@@ -1,6 +1,5 @@
 #! ruby -Ku
 
-require "json"
 require "pure_nkf"
 
 get "/" do
