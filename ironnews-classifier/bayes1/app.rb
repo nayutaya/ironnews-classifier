@@ -22,14 +22,16 @@ end
 
 # FIXME: POST
 get "/bayes1/add" do
-  category = "鉄道"
-  body     = "本日は晴天なり2"
+  category = params[:category].to_s.strip
+  body     = params[:body].to_s.strip
 
-  unless BayesOneDocument.first(:body => body)
-    document = BayesOneDocument.new(
-      :category => category,
-      :body     => body)
-    document.save!
+  if !category.empty? && !body.empty?
+    unless BayesOneDocument.first(:body => body)
+      document = BayesOneDocument.new(
+        :category => category,
+        :body     => body)
+      document.save!
+    end
   end
 end
 
