@@ -10,7 +10,7 @@ uri = URI.parse("http://ironnews-classifier1.appspot.com/bayes1/train")
 Net::HTTP.start(uri.host, uri.port) { |http|
   loop {
     response = http.get(uri.path)
-    p(response.code)
-    sleep(30)
+    STDERR.puts(Time.now.strftime("%H:%M:%S") + " " + response.code)
+    sleep(1)
   }
 }
