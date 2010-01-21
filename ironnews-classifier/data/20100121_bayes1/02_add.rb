@@ -1,6 +1,6 @@
 #! ruby -Ku
 
-# Google App Engine上の単純ベイズ分類器に学習データを登録する
+# Google App Engine上の単純ベイズ分類器に学習データを追加する
 
 require "cgi"
 require "uri"
@@ -23,23 +23,21 @@ documents = File.foreach("documents.txt").
   map { |line| line.split(/\t/) }.
   reject { |category, title| added["#{category}:#{title}"] }
 
-#p documents.size
-#p added
-
 uri = URI.parse("http://ironnews-classifier1.appspot.com/bayes1/add")
 
-parts = documents[0, 5]
+# 学習データを追加
+documents.each_slice(5) { |parts|
+  param = {"documents" => parts}
+  data  = "json=#{CGI.escape(param.to_json)}"
 
-param = {"documents" => parts}
-data  = "json=#{CGI.escape(param.to_json)}"
-
-Net::HTTP.start(uri.host, uri.port) { |http|
-  response  = http.post(uri.path, data)
-  processed = JSON.parse(response.body)
-  File.open("added.txt", "a") { |file|
-    processed.each { |id, category, title|
-      file.puts([category, title].join("\t"))
+  Net::HTTP.start(uri.host, uri.port) { |http|
+    response  = http.post(uri.path, data)
+    processed = JSON.parse(response.body)
+    File.open("added.txt", "a") { |file|
+      processed.each { |id, category, title|
+        file.puts([category, title].join("\t"))
+      }
     }
+    p([response.code, processed.size])
   }
-  p([response.code, processed.size])
 }
