@@ -49,11 +49,11 @@ end
 
 # FIXME: POST
 get "/bayes1/remove" do
-  documents = BayesOneDocument.all
+  documents = BayesOneDocument.all(:limit => 200)
   documents.each { |document| document.destroy }
-  categories = BayesOneCategory.all
+  categories = BayesOneCategory.all(:limit => 200)
   categories.each { |category| category.destroy }
-  features = BayesOneFeature.all
+  features = BayesOneFeature.all(:limit => 200)
   features.each { |feature| feature.destroy }
   "remove"
 end
