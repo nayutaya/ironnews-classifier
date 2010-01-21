@@ -31,16 +31,19 @@ documents.each_slice(20) { |parts|
   data  = "json=#{CGI.escape(param.to_json)}"
 
   Net::HTTP.start(uri.host, uri.port) { |http|
-    response  = http.post(uri.path, data)
-    processed = JSON.parse(response.body)
+    response = http.post(uri.path, data)
 
-    # 追加済みの学習データに追加
-    File.open("added.txt", "a") { |file|
-      processed.each { |id, category, title|
-        file.puts([category, title].join("\t"))
+    if response.code == 200
+      processed = JSON.parse(response.body)
+
+      # 追加済みの学習データに追加
+      File.open("added.txt", "a") { |file|
+        processed.each { |id, category, title|
+          file.puts([category, title].join("\t"))
+        }
       }
-    }
+    end
 
-    p([Time.now.strftime("%H:%M:%S"), response.code, processed.size])
+    STDERR.puts(Time.now.strftime("%H:%M:%S") + " " + response.code)
   }
 }
