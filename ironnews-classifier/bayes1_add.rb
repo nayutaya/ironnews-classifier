@@ -24,7 +24,7 @@ def add(category, body)
     p(io.read)
   }
 =end
-  obj = {"documents" => [["a","b"], ["e","f"]]}
+  obj = {"documents" => [["g","h"], ["i","j"]]}
   param = "json=#{CGI.escape(obj.to_json)}"
   url = "http://#{HOST}/bayes1/add"
   uri = URI.parse(url)

@@ -27,39 +27,20 @@ get "/bayes1/features" do
   erb(:"bayes1/features")
 end
 
-# FIXME: POST
 post "/bayes1/add" do
-=begin
-  category = params[:category].to_s.strip
-  body     = params[:body].to_s.strip
-
-  if !category.empty? && !body.empty?
-    unless BayesOneDocument.first(:body => body)
-      document = BayesOneDocument.new(
-        :category => category,
-        :body     => body)
-      document.save!
-    end
-  end
-=end
-
   json      = params[:json] || "{}"
   request   = JSON.parse(json)
   documents = request["documents"] || []
 
-  result = []
-  documents.each { |category, body|
-    next if category.blank?
-    next if body.blank?
-    next if BayesOneDocument.first(:body => body)
+  # MEMO: bodyの一意性が保証されないことに注意すること
 
-    document = BayesOneDocument.new(
-      :category => category,
-      :body     => body)
-    document.save!
-
-    result << [document.id, category, body]
-  }
+  result = documents.
+    reject { |category, body| category.blank? }.
+    reject { |category, body| body.blank? }.
+    reject { |category, body| BayesOneDocument.first(:body => body) }.
+    map    { |category, body| BayesOneDocument.new(:category => category, :body => body) }.
+    each   { |document| document.save! }.
+    map    { |document| [document.id, document.category, document.body] }
 
   content_type(:json)
   result.to_json
