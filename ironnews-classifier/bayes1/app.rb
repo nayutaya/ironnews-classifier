@@ -16,8 +16,8 @@ get "/bayes1/documents" do
 end
 
 get "/bayes1/categories" do
-  # FIXME: 名称でソート
-  @categories = BayesOneCategory.all
+  @categories = BayesOneCategory.all(
+    :order => [:category.asc])
   erb(:"bayes1/categories")
 end
 
