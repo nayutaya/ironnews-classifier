@@ -26,18 +26,21 @@ documents = File.foreach("documents.txt").
 uri = URI.parse("http://ironnews-classifier1.appspot.com/bayes1/add")
 
 # 学習データを追加
-documents.each_slice(5) { |parts|
+documents.each_slice(20) { |parts|
   param = {"documents" => parts}
   data  = "json=#{CGI.escape(param.to_json)}"
 
   Net::HTTP.start(uri.host, uri.port) { |http|
     response  = http.post(uri.path, data)
     processed = JSON.parse(response.body)
+
+    # 追加済みの学習データに追加
     File.open("added.txt", "a") { |file|
       processed.each { |id, category, title|
         file.puts([category, title].join("\t"))
       }
     }
-    p([response.code, processed.size])
+
+    p([Time.now.strftime("%H:%M:%S"), response.code, processed.size])
   }
 }
