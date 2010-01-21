@@ -64,7 +64,7 @@ get "/bayes1/train" do
 
   target_documents.each { |document|
     # カテゴリの文書数をインクリメント
-    category = BayesOneCategory.find_or_create(:name => document.category)
+    category = BayesOneCategory.find_or_create(:category => document.category)
     category.quantity += 1
     category.save
 

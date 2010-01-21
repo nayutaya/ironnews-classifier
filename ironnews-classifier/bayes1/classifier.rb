@@ -20,7 +20,7 @@ class BayesOneClassifier
   def catcount(category)
     @_catcount ||= {}
     @_catcount[category] ||= BayesOneCategory.
-      all(:name => category).
+      all(:category => category).
       map(&:quantity).sum
     return @_catcount[category]
   end
@@ -33,7 +33,7 @@ class BayesOneClassifier
 
   # カテゴリの一覧
   def categories
-    @_categories ||= BayesOneCategory.all.map(&:name).sort.uniq
+    @_categories ||= BayesOneCategory.all.map(&:category).sort.uniq
     return @_categories
   end
 

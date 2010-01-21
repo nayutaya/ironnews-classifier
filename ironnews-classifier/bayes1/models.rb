@@ -14,7 +14,7 @@ class BayesOneCategory
   include DataMapper::Resource
 
   property :id,       Serial
-  property :name,     String
+  property :category, String
   property :quantity, Integer, :default => 0
 end
 
