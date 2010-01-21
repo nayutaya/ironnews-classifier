@@ -48,6 +48,7 @@ post "/bayes1/add" do
 end
 
 # FIXME: POST
+=begin
 get "/bayes1/remove" do
   documents = BayesOneDocument.all(:limit => 200)
   documents.each { |document| document.destroy }
@@ -57,6 +58,7 @@ get "/bayes1/remove" do
   features.each { |feature| feature.destroy }
   "remove"
 end
+=end
 
 get "/bayes1/train" do
   tokenizer = BayesOneTokenizer.new
