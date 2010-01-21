@@ -9,11 +9,13 @@ get "/bayes1" do
 end
 
 get "/bayes1/documents" do
+  # FIXME: 大きいID50件に制限
   @documents = BayesOneDocument.all
   erb(:"bayes1/documents")
 end
 
 get "/bayes1/categories" do
+  # FIXME: 名称でソート
   @categories = BayesOneCategory.all
   erb(:"bayes1/categories")
 end
@@ -26,7 +28,8 @@ get "/bayes1/features" do
 end
 
 # FIXME: POST
-get "/bayes1/add" do
+post "/bayes1/add" do
+=begin
   category = params[:category].to_s.strip
   body     = params[:body].to_s.strip
 
@@ -38,6 +41,28 @@ get "/bayes1/add" do
       document.save!
     end
   end
+=end
+
+  json      = params[:json] || "{}"
+  request   = JSON.parse(json)
+  documents = request["documents"] || []
+
+  result = []
+  documents.each { |category, body|
+    next if category.blank?
+    next if body.blank?
+    next if BayesOneDocument.first(:body => body)
+
+    document = BayesOneDocument.new(
+      :category => category,
+      :body     => body)
+    document.save!
+
+    result << [document.id, category, body]
+  }
+
+  content_type(:json)
+  result.to_json
 end
 
 # FIXME: POST
