@@ -9,8 +9,9 @@ get "/bayes1" do
 end
 
 get "/bayes1/documents" do
-  # FIXME: 大きいID50件に制限
-  @documents = BayesOneDocument.all
+  @documents = BayesOneDocument.all(
+    :order => [:id.desc],
+    :limit => 50)
   erb(:"bayes1/documents")
 end
 
