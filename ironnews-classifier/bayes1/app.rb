@@ -65,17 +65,21 @@ get "/bayes1/train" do
 
   all_documents = BayesOneDocument.all(
     :trained => false,
-    :limit   => 25)
+    :limit   => 1)
 
   target_documents = all_documents.
-    sort_by { rand }.
-    slice(0, 3)
+    #sort_by { rand }.
+    slice(0, 1)
 
   target_documents.each { |document|
     # カテゴリの文書数をインクリメント
     category = BayesOneCategory.find_or_create(:category => document.category)
     category.quantity += 1
-    category.save
+    begin
+      category.save
+    rescue AppEngine::Datastore::Timeout
+      category.save # 一度だけ再試行する
+    end
 
     # 特徴の特徴数をインクリメント
     tokens = tokenizer.tokenize(document.body)
@@ -84,12 +88,20 @@ get "/bayes1/train" do
         :category => document.category,
         :feature  => token)
       feature.quantity += 1
-      feature.save
+      begin
+        feature.save
+      rescue AppEngine::Datastore::Timeout
+        feature.save # 一度だけ再試行する
+      end
     }
 
     # 学習済みに変更
     document.trained = true
-    document.save
+    begin
+      document.save
+    rescue AppEngine::Datastore::Timeout
+      document.save # 一度だけ再試行する
+    end
   }
 
   #content_type(:json)
