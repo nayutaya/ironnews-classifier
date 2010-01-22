@@ -11,6 +11,6 @@ Net::HTTP.start(uri.host, uri.port) { |http|
   loop {
     response = http.get(uri.path)
     STDERR.puts(Time.now.strftime("%H:%M:%S") + " " + response.code)
-    sleep(1)
+    sleep(5)
   }
 }
