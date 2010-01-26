@@ -24,6 +24,7 @@ File.open("dump.html", "wb") { |file|
     file.puts(%|    <td>#{article.article_id}</td>|)
     file.puts(%|    <td>#{CGI.escapeHTML(article.title)}</td>|)
     file.puts(%|    <td>#{CGI.escapeHTML(article.local_bayes1.to_s)}</td>|)
+    file.puts(%|    <td>#{CGI.escapeHTML(article.gae_bayes1.to_s)}</td>|)
     file.puts(%|   </tr>|)
   }
 
