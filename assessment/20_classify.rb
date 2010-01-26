@@ -17,7 +17,16 @@ THRESHOLDS = {
 def classify(body)
   url  = "http://ironnews-classifier1.appspot.com/bayes1/classify"
   url += "?body=" + CGI.escape(body)
-  json = open(url) { |io| io.read }
+
+  count = 0
+  begin
+    json = open(url) { |io| io.read }
+  rescue OpenURI::HTTPError => e
+    p(e)
+    count += 1
+    retry if count <= 5
+  end
+
   return JSON.parse(json)
 end
 
