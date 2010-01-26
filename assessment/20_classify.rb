@@ -45,9 +45,10 @@ def categorize(body)
   end
 end
 
-articles = Article.all(:gae_bayes1 => nil, :order => [:article_id.asc])
-articles.each { |article|
+order = [:article_id.asc]
+#order = [:article_id.desc]
+while article = Article.first(:gae_bayes1 => nil, :order => order)
   p article
   article.gae_bayes1 = categorize(article.title) || "不明"
   article.save!
-}
+end
