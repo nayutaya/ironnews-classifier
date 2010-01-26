@@ -9,6 +9,8 @@ require "rubygems"
 require "wsse"
 require "json"
 
+require "config"
+
 CREDENTIALS = YAML.load_file("ironnews.id")
 USERNAME    = "bayes1"
 PASSWORD    = CREDENTIALS[USERNAME]
@@ -25,4 +27,18 @@ def get_user_tagged_articles(tag, page)
   return JSON.parse(json)
 end
 
-p get_user_tagged_articles("鉄道", 2)
+["鉄道", "非鉄"].each { |category|
+  page = 1
+  begin
+    STDERR.puts("page: #{page}")
+    result = get_user_tagged_articles(category, page)
+    articles = result["result"]["articles"]
+    articles.each { |article|
+      record = Article.find_or_create(:article_id => article["article_id"])
+      record.title = article["title"]
+      record.local_bayes1 = category
+      record.save!
+    }
+    page += 1
+  end while page <= result["result"]["total_pages"]
+}

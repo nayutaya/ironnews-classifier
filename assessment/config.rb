@@ -2,6 +2,7 @@
 require "rubygems"
 require "dm-core"
 require "dm-aggregates"
+require "dm-ar-finders"
 require "facets"
 
 require "models"
