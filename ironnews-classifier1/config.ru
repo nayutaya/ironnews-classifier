@@ -7,6 +7,5 @@ AppEngine::Rack.configure_app(
   :version     => "v1")
 
 require "app"
-require "bayes1/app"
 
 run Sinatra::Application

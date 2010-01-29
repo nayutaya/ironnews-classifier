@@ -13,3 +13,5 @@ end
 get "/" do
   "ironnews-classifier"
 end
+
+require "bayes1/app"
