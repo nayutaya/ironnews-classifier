@@ -1,5 +1,4 @@
 
-require "json"
 require "bayes1/models"
 require "bayes1/tokenizer"
 require "bayes1/classifier"
@@ -110,13 +109,20 @@ get "/bayes1/train" do
 end
 
 get "/bayes1/classify" do
+  logger   = AppEngine::Logger.new
+  memcache = AppEngine::Memcache.new(:namespace => "bayes1")
+
   body = params[:body].to_s
 
-  tokenizer  = BayesOneTokenizer.new
-  classifier = BayesOneClassifier.new
+  key = "classify_#{sha1(body)}"
 
-  tokens = tokenizer.tokenize(body)
-  probs  = classifier.classify(tokens)
+  probs = cache(memcache, key) {
+    tokenizer  = BayesOneTokenizer.new
+    classifier = BayesOneClassifier.new
+    tokens = tokenizer.tokenize(body)
+    value  = classifier.classify(tokens)
+    [value, 10]
+  }
 
   #content_type(:json)
   content_type(:text)
