@@ -121,7 +121,7 @@ get "/bayes1/classify" do
     classifier = BayesOneClassifier.new
     tokens = tokenizer.tokenize(body)
     value  = classifier.classify(tokens)
-    [value, 10]
+    [value, 60 * 60]
   }
 
   #content_type(:json)
