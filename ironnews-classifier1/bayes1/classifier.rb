@@ -3,11 +3,12 @@ require "facets"
 
 class BayesOneClassifier
   def initialize
-    # nop
+    @logger = AppEngine::Logger.new
   end
 
   # あるカテゴリの中に、ある特徴が現れた数
   def fcount(feature, category)
+@logger.warn("raw fcount_#{feature}_#{category}")
     @_fcount                    ||= {}
     @_fcount[category]          ||= {}
     @_fcount[category][feature] ||= BayesOneFeature.
@@ -18,6 +19,7 @@ class BayesOneClassifier
 
   # あるカテゴリの中のドキュメント数
   def catcount(category)
+#@logger.warn("raw catcount_#{category}")
     @_catcount ||= {}
     @_catcount[category] ||= BayesOneCategory.
       all(:category => category).
@@ -27,12 +29,14 @@ class BayesOneClassifier
 
   # ドキュメントの総数
   def totalcount
+#@logger.warn("raw totalcount")
     @_totalcount ||= BayesOneCategory.all.map(&:quantity).sum
     return @_totalcount
   end
 
   # カテゴリの一覧
   def categories
+#@logger.warn("raw categories")
     @_categories ||= BayesOneCategory.all.map(&:category).sort.uniq
     return @_categories
   end
@@ -68,5 +72,30 @@ class BayesOneClassifier
     return self.categories.mash { |category|
       [category, self.prob(features, category)]
     }
+  end
+end
+
+class BayesOneMemcachedClassifier < BayesOneClassifier
+  def initialize
+    super()
+    @memcache = AppEngine::Memcache.new(:namespace => "a")
+  end
+
+  def fcount(feature, category)
+    key = "fcount_#{feature}_#{category}"
+@logger.warn("memcache fcount_#{feature}_#{category}")
+    value = @memcache.get(key)
+    unless value
+@logger.warn("cache miss")
+      value = super(feature, category)
+      @memcache.set(key, value, 30)
+    end
+    return value
+  end
+end
+
+class BayesOneLocalCachedClassifier < BayesOneMemcachedClassifier
+  def initialize
+    super()
   end
 end
