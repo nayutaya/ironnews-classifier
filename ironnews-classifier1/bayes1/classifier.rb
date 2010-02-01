@@ -65,9 +65,9 @@ class BayesOneClassifier
 end
 
 class BayesOneMemcachedClassifier < BayesOneClassifier
-  def initialize
+  def initialize(memcache)
     super()
-    @memcache = AppEngine::Memcache.new(:namespace => self.class.name)
+    @memcache = memcache
   end
 
   def fcount(feature, category)
@@ -103,7 +103,7 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
 end
 
 class BayesOneLocalCachedClassifier < BayesOneMemcachedClassifier
-  def initialize
-    super()
+  def initialize(memcache)
+    super(memcache)
   end
 end

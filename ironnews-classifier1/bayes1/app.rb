@@ -118,7 +118,7 @@ get "/bayes1/classify" do
 
   probs = cache(memcache, key) {
     tokenizer  = BayesOneTokenizer.new
-    classifier = BayesOneClassifier.new
+    classifier = BayesOneLocalCachedClassifier.new(memcache)
     tokens = tokenizer.tokenize(body)
     value  = classifier.classify(tokens)
     [value, 60 * 60]
