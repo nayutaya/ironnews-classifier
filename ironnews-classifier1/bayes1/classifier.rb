@@ -71,24 +71,24 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
   end
 
   def fcount(feature, category)
-    return cache("fcount_#{feature}_#{category}") { super }
+    return shared_cache("fcount_#{feature}_#{category}") { super }
   end
 
   def catcount(category)
-    return cache("catcount_#{category}") { super }
+    return shared_cache("catcount_#{category}") { super }
   end
 
   def totalcount
-    return cache("totalcount") { super }
+    return shared_cache("totalcount") { super }
   end
 
   def categories
-    return cache("categories") { super }
+    return shared_cache("categories") { super }
   end
 
   private
 
-  def cache(key)
+  def shared_cache(key)
     value = @memcache.get(key)
     unless value
       value = yield
@@ -105,24 +105,24 @@ class BayesOneLocalCachedClassifier < BayesOneMemcachedClassifier
   end
 
   def fcount(feature, category)
-    return cache("fcount_#{feature}_#{category}") { super }
+    return local_cache("fcount_#{feature}_#{category}") { super }
   end
 
   def catcount(category)
-    return cache("catcount_#{category}") { super }
+    return local_cache("catcount_#{category}") { super }
   end
 
   def totalcount
-    return cache("totalcount") { super }
+    return local_cache("totalcount") { super }
   end
 
   def categories
-    return cache("categories") { super }
+    return local_cache("categories") { super }
   end
 
   private
 
-  def cache(key)
+  def local_cache(key)
     value = @cache[key]
     unless value
       value = yield
