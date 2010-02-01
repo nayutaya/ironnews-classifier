@@ -8,13 +8,9 @@ class BayesOneClassifier
 
   # あるカテゴリの中に、ある特徴が現れた数
   def fcount(feature, category)
-@logger.warn("raw fcount_#{feature}_#{category}")
-    @_fcount                    ||= {}
-    @_fcount[category]          ||= {}
-    @_fcount[category][feature] ||= BayesOneFeature.
+    return BayesOneFeature.
       all(:category => category, :feature => feature).
       map(&:quantity).sum
-    return @_fcount[category][feature]
   end
 
   # あるカテゴリの中のドキュメント数
@@ -83,11 +79,17 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
 
   def fcount(feature, category)
     key = "fcount_#{feature}_#{category}"
-@logger.warn("memcache fcount_#{feature}_#{category}")
+    return cache(key) {
+      super(feature, category)
+    }
+  end
+
+  private
+
+  def cache(key)
     value = @memcache.get(key)
     unless value
-@logger.warn("cache miss")
-      value = super(feature, category)
+      value = yield
       @memcache.set(key, value, 30)
     end
     return value
