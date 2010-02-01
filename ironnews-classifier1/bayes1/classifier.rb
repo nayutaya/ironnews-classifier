@@ -71,23 +71,19 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
   end
 
   def fcount(feature, category)
-    return cache("fcount_#{feature}_#{category}") {
-      super(feature, category)
-    }
+    return cache("fcount_#{feature}_#{category}") { super }
   end
 
   def catcount(category)
-    return cache("catcount_#{category}") {
-      super(category)
-    }
+    return cache("catcount_#{category}") { super }
   end
 
   def totalcount
-    return cache("totalcount") { super() }
+    return cache("totalcount") { super }
   end
 
   def categories
-    return cache("categories") { super() }
+    return cache("categories") { super }
   end
 
   private
@@ -109,23 +105,19 @@ class BayesOneLocalCachedClassifier < BayesOneMemcachedClassifier
   end
 
   def fcount(feature, category)
-    return cache("fcount_#{feature}_#{category}") {
-      super(feature, category)
-    }
+    return cache("fcount_#{feature}_#{category}") { super }
   end
 
   def catcount(category)
-    return cache("catcount_#{category}") {
-      super(category)
-    }
+    return cache("catcount_#{category}") { super }
   end
 
   def totalcount
-    return cache("totalcount") { super() }
+    return cache("totalcount") { super }
   end
 
   def categories
-    return cache("categories") { super() }
+    return cache("categories") { super }
   end
 
   private
