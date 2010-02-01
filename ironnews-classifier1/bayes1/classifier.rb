@@ -72,6 +72,7 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
 
   def fcount(feature, category)
     key = "fcount_#{feature}_#{category}"
+@logger.warn("memcache #{key}")
     return cache(key) { super(feature, category) }
   end
 
@@ -105,5 +106,23 @@ end
 class BayesOneLocalCachedClassifier < BayesOneMemcachedClassifier
   def initialize(memcache)
     super(memcache)
+    @cache = {}
+  end
+
+  def fcount(feature, category)
+    key = "fcount_#{feature}_#{category}"
+@logger.warn("local #{key}")
+    return cache(key) { super(feature, category) }
+  end
+
+  private
+
+  def cache(key)
+    value = @cache[key]
+    unless value
+      value = yield
+      @cache[key] = value
+    end
+    return value
   end
 end
