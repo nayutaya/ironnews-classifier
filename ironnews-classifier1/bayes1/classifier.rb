@@ -92,7 +92,7 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
     value = @memcache.get(key)
     unless value
       value = yield
-      @memcache.set(key, value, 30)
+      @memcache.set(key, value, 60 * 60 * 24)
     end
     return value
   end
