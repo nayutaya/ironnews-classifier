@@ -15,12 +15,9 @@ class BayesOneClassifier
 
   # あるカテゴリの中のドキュメント数
   def catcount(category)
-#@logger.warn("raw catcount_#{category}")
-    @_catcount ||= {}
-    @_catcount[category] ||= BayesOneCategory.
+    return BayesOneCategory.
       all(:category => category).
       map(&:quantity).sum
-    return @_catcount[category]
   end
 
   # ドキュメントの総数
@@ -74,14 +71,17 @@ end
 class BayesOneMemcachedClassifier < BayesOneClassifier
   def initialize
     super()
-    @memcache = AppEngine::Memcache.new(:namespace => "a")
+    @memcache = AppEngine::Memcache.new(:namespace => self.class.name)
   end
 
   def fcount(feature, category)
     key = "fcount_#{feature}_#{category}"
-    return cache(key) {
-      super(feature, category)
-    }
+    return cache(key) { super(feature, category) }
+  end
+
+  def catcount(category)
+    key = "catcount_#{category}"
+    return cache(key) { super(category) }
   end
 
   private
