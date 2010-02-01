@@ -32,7 +32,11 @@ def cache(memcache, key)
 end
 
 get "/" do
-  "ironnews-classifier"
+  return "ironnews-classifier v1"
+end
+
+get "/ping" do
+  return "pong"
 end
 
 require "bayes1/app"
