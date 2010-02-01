@@ -8,6 +8,7 @@ require "appengine-apis/urlfetch"
 require "appengine-apis/memcache"
 
 require "patch_memcache_mojibake"
+require "patch_memcache_key"
 require "patch_memcache_expiration"
 
 DataMapper.setup(:default, "appengine://auto")
