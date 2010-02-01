@@ -22,16 +22,12 @@ class BayesOneClassifier
 
   # ドキュメントの総数
   def totalcount
-#@logger.warn("raw totalcount")
-    @_totalcount ||= BayesOneCategory.all.map(&:quantity).sum
-    return @_totalcount
+    return BayesOneCategory.all.map(&:quantity).sum
   end
 
   # カテゴリの一覧
   def categories
-#@logger.warn("raw categories")
-    @_categories ||= BayesOneCategory.all.map(&:category).sort.uniq
-    return @_categories
+    return BayesOneCategory.all.map(&:category).sort.uniq
   end
 
   # ある特徴が、あるカテゴリに現れる確率
@@ -82,6 +78,16 @@ class BayesOneMemcachedClassifier < BayesOneClassifier
   def catcount(category)
     key = "catcount_#{category}"
     return cache(key) { super(category) }
+  end
+
+  def totalcount
+    key = "totalcount"
+    return cache(key) { super() }
+  end
+
+  def categories
+    key = "categories"
+    return cache(key) { super() }
   end
 
   private
