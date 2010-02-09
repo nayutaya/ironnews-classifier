@@ -14,8 +14,8 @@ categorizer = MlpCategorizer.new(tokenizer)
 STDERR.puts("shuffling...")
 training_data = []
 [
-  ["rail", "../../ironnews-data/news_title/rail_*.txt"],
-  ["rest", "../../ironnews-data/news_title/rest_*.txt"],
+  ["rail", "../../../femto/ironnews/ironnews-data/news_title/rail_*.txt"],
+  ["rest", "../../../femto/ironnews/ironnews-data/news_title/rest_*.txt"],
 ].each { |category, pattern|
   Dir.glob(pattern).each { |path|
     STDERR.puts("#{category} #{path}")
