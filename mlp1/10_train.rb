@@ -2,6 +2,9 @@
 
 # 多層パーセプトロンネットワークによる学習を行う
 
+require "yaml"
+require "rubygems"
+require "ironnews_utility"
 require "mlp_categorizer"
 
 DB_FILENAME = "db.out"
@@ -25,6 +28,34 @@ training_data = []
     }
   }
 }
+
+articles = Dir.glob("../../../femto/ironnews/ironnews-data/ironnews/*.yaml").sort.inject({}) { |memo, filepath|
+  STDERR.puts(filepath)
+  memo.merge(YAML.load_file(filepath))
+}
+articles.
+  sort_by { |article_id, article| article_id }.
+  map     { |article_id, article|
+    url       = article["url"]
+    title     = article["title"]
+    user_tags = article["user_tags"] || {}
+    yuya_tags = user_tags["yuya"] || []
+    division  = (yuya_tags & ["鉄道", "非鉄"]).first
+    [url, title, division]
+  }.
+  reject { |url, title, division| division.nil? }.
+  map    { |url, title, division|
+    ctitle = IronnewsUtility.cleanse_title(url, title) rescue title
+    [url, title, ctitle, division]
+  }.
+  reject { |url, title, ctitle, division| ctitle == title }.
+  each   { |url, title, ctitle, division|
+    case division
+    when "鉄道" then training_data << ["rail", ctitle]
+    when "非鉄" then training_data << ["rest", ctitle]
+    else raise
+    end
+  }
 
 srand(0)
 training_data = training_data.sort_by { rand }
